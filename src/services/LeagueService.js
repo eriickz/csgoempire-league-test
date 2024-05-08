@@ -8,9 +8,17 @@
  *       ADDITIONALLY, MAKE SURE THAT ALL LIBRARIES USED IN THIS FILE FILE ARE COMPATIBLE WITH PURE JAVASCRIPT
  * 
  */
+
+import axios from "axios"
+import dayjs from "dayjs";
+import { nanoid } from "nanoid";
+
+axios.defaults.baseURL = "http://localhost:3001/api/v1"
+
 class LeagueService {    
-    
-    /**
+  #matches = []
+
+  /**
      * Sets the match schedule.
      * Match schedule will be given in the following form:
      * [
@@ -36,16 +44,24 @@ class LeagueService {
      * 
      * @param {Array} matches List of matches.
      */    
-    setMatches(matches) {}
+  setMatches(matches) {
+    this.#matches = matches.map(match => ({ 
+      ...match, 
+      id: nanoid(),
+      matchDate: dayjs(match.matchDate).format("D.M.YYYY hh:mm") 
+    }))
+  }
 
-    /**
+  /**
      * Returns the full list of matches.
      * 
      * @returns {Array} List of matches.
      */
-    getMatches() {}
+  getMatches() {
+    return this.#matches
+  }
 
-    /**
+  /**
      * Returns the leaderboard in a form of a list of JSON objecs.
      * 
      * [     
@@ -60,15 +76,21 @@ class LeagueService {
      * 
      * @returns {Array} List of teams representing the leaderboard.
      */
-    getLeaderboard() {}
-    
-    /**
+  getLeaderboard() {}
+
+  /**
      * Asynchronic function to fetch the data from the server and set the matches.
      */
-    async fetchData() {
-        const matches = [] //TODO: replace this with the correct matches.
-        this.setMatches(matches); 
-    }    
+  async fetchData() {
+    const response = await axios.get("/getAccessToken")
+    const { data } = await axios.get("/getAllMatches", {
+      headers: {
+        Authorization: `Bearer ${response.data.access_token}` 
+      }
+    })
+
+    this.setMatches(data.matches); 
+  }    
 }
 
 export default LeagueService;

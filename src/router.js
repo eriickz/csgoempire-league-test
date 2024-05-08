@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Schedule from "./pages/Schedule.vue"
-import Leaderboard from "./pages/Leaderboard.vue"
+import Schedule from "./pages/Schedule/Schedule.vue"
+import Leaderboard from "./pages/Leaderboard/Leaderboard.vue"
 import NotFound from "./pages/NotFound.vue"
 
 const routes = [
