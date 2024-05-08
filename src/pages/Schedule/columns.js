@@ -2,13 +2,13 @@ const columns = [
   { 
     name: "Date/Time",
     key: "matchDate",
-    autoHide: true,
+    cellClasses: "max-sm2:hidden",
     containerClasses: "w-[55px] [text-align-last:end]",
   },
   { 
     name: "Stadium",
     key: "stadium",
-    autoHide: true 
+    cellClasses: "max-md2:hidden",
   },
   { 
     name: "Home Team",

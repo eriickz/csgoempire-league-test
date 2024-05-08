@@ -13,8 +13,6 @@ import axios from "axios"
 import dayjs from "dayjs";
 import { nanoid } from "nanoid";
 
-axios.defaults.baseURL = "http://localhost:3001/api/v1"
-
 class LeagueService {    
   #matches = []
 
@@ -61,6 +59,18 @@ class LeagueService {
     return this.#matches
   }
 
+  calculatePoints(homeTeamScore, awayTeamScore) {
+    if (homeTeamScore === awayTeamScore) {
+      return 1
+    }
+
+    if (homeTeamScore > awayTeamScore) {
+      return 3
+    }
+
+    return 0
+  }
+
   /**
      * Returns the leaderboard in a form of a list of JSON objecs.
      * 
@@ -76,16 +86,62 @@ class LeagueService {
      * 
      * @returns {Array} List of teams representing the leaderboard.
      */
-  getLeaderboard() {}
+  getLeaderboard() {
+    const leaderboard = []
+
+    for (const match of this.#matches) {
+      const foundHomeTeamBoardIdx = leaderboard.findIndex(teamBoard => match.homeTeam === teamBoard.teamName)
+      const foundAwayTeamBoardIdx = leaderboard.findIndex(teamBoard => match.awayTeam === teamBoard.teamName)
+
+      if (foundHomeTeamBoardIdx === -1) {
+        leaderboard.push({
+          teamName: match.homeTeam,
+          matchesPlayed: 1,
+          goalsFor: match.homeTeamScore,
+          goalsAgainst: match.awayTeamScore,
+          goalsDifference: match.homeTeamScore - match.awayTeamScore,
+          points: this.calculatePoints(match.homeTeamScore, match.awayTeamScore) 
+        })
+      } else {
+        const newPoints = this.calculatePoints(match.homeTeamScore, match.awayTeamScore)
+
+        leaderboard[foundHomeTeamBoardIdx].matchesPlayed = leaderboard[foundHomeTeamBoardIdx].matchesPlayed + 1
+        leaderboard[foundHomeTeamBoardIdx].goalsFor = leaderboard[foundHomeTeamBoardIdx].goalsFor + match.homeTeamScore
+        leaderboard[foundHomeTeamBoardIdx].goalsAgainst = leaderboard[foundHomeTeamBoardIdx].goalsAgainst + match.awayTeamScore
+        leaderboard[foundHomeTeamBoardIdx].goalsDifference = leaderboard[foundHomeTeamBoardIdx].goalsFor - leaderboard[foundHomeTeamBoardIdx].goalsAgainst
+        leaderboard[foundHomeTeamBoardIdx].points = leaderboard[foundHomeTeamBoardIdx].points + newPoints
+      }
+
+      if (foundAwayTeamBoardIdx === -1) {
+        leaderboard.push({
+          teamName: match.awayTeam,
+          matchesPlayed: 1,
+          goalsFor: match.awayTeamScore,
+          goalsAgainst: match.homeTeamScore,
+          goalsDifference: match.awayTeamScore - match.homeTeamScore,
+          points: this.calculatePoints(match.awayTeamScore, match.homeTeamScore) 
+        })
+      } else {
+        const newPoints = this.calculatePoints(match.awayTeamScore, match.homeTeamScore)
+
+        leaderboard[foundAwayTeamBoardIdx].matchesPlayed = leaderboard[foundAwayTeamBoardIdx].matchesPlayed + 1
+        leaderboard[foundAwayTeamBoardIdx].goalsFor = leaderboard[foundAwayTeamBoardIdx].goalsFor + match.awayTeamScore
+        leaderboard[foundAwayTeamBoardIdx].goalsAgainst = leaderboard[foundAwayTeamBoardIdx].goalsAgainst + match.homeTeamScore
+        leaderboard[foundAwayTeamBoardIdx].goalsDifference = leaderboard[foundAwayTeamBoardIdx].goalsFor - leaderboard[foundAwayTeamBoardIdx].goalsAgainst
+        leaderboard[foundAwayTeamBoardIdx].points = leaderboard[foundAwayTeamBoardIdx].points + newPoints
+      }
+    } 
+
+    return leaderboard
+  }
 
   /**
      * Asynchronic function to fetch the data from the server and set the matches.
      */
   async fetchData() {
-    const response = await axios.get("/getAccessToken")
     const { data } = await axios.get("/getAllMatches", {
       headers: {
-        Authorization: `Bearer ${response.data.access_token}` 
+        Authorization: `Bearer ${sessionStorage.getItem("token")}` 
       }
     })
 

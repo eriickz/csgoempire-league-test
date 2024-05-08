@@ -21,7 +21,7 @@ const props = defineProps({
     <thead>
       <tr class="bg-table h-10 text-xs text-left">
         <template v-for="column in props.columns" :key="column.name">
-          <TableHead :class="column.textClasses">{{column.name}}</TableHead>
+          <TableHead :class="[column.textClasses, column.cellClasses]">{{column.name}}</TableHead>
         </template>
       </tr>
     </thead>
@@ -31,7 +31,11 @@ const props = defineProps({
         v-for="(item, index) in props.data" :key="item.id"
         :class="{ 'bg-graybg': index % 2 !== 0 }" 
       >
-        <Cell v-for="column in props.columns" :key="column.name">
+        <Cell 
+          v-for="column in props.columns" 
+          :key="column.name" 
+          :class="column.cellClasses"
+        >
           <template v-if="column.type === 'team'">
             <FlagCell 
               :country="item[column.key]" 
