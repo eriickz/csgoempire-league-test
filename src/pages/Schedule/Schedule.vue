@@ -1,12 +1,18 @@
 <script setup>
-import { inject } from "vue"
+import { ref, watchEffect } from "vue"
 import Heading from "../../global/components/Heading.vue"
 import DataTable from "../../global/components/DataTable/DataTable.vue"
 import columns from "./columns.js"
 import leagueService from "../../global/leagueService.js"
-import { LEAGUE_MATCHES } from "../../global/constants.js"
 
-const matches = inject(LEAGUE_MATCHES)
+const matches = ref([])
+
+async function loadMatches() {
+  await leagueService.fetchData()
+  matches.value = leagueService.getMatches()
+}
+
+loadMatches()
 </script>
 
 <template>

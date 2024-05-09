@@ -96,41 +96,43 @@ class LeagueService {
       if (foundHomeTeamBoardIdx === -1) {
         leaderboard.push({
           teamName: match.homeTeam,
-          matchesPlayed: 1,
+          matchesPlayed: match.matchPlayed ? 1 : 0,
           goalsFor: match.homeTeamScore,
           goalsAgainst: match.awayTeamScore,
           goalsDifference: match.homeTeamScore - match.awayTeamScore,
-          points: this.calculatePoints(match.homeTeamScore, match.awayTeamScore) 
+          points: match.matchPlayed ? this.calculatePoints(match.homeTeamScore, match.awayTeamScore) : 0
         })
       } else {
         const newPoints = this.calculatePoints(match.homeTeamScore, match.awayTeamScore)
 
-        leaderboard[foundHomeTeamBoardIdx].matchesPlayed = leaderboard[foundHomeTeamBoardIdx].matchesPlayed + 1
+        leaderboard[foundHomeTeamBoardIdx].matchesPlayed = match.matchPlayed ? leaderboard[foundHomeTeamBoardIdx].matchesPlayed + 1 : leaderboard[foundHomeTeamBoardIdx].matchesPlayed
         leaderboard[foundHomeTeamBoardIdx].goalsFor = leaderboard[foundHomeTeamBoardIdx].goalsFor + match.homeTeamScore
         leaderboard[foundHomeTeamBoardIdx].goalsAgainst = leaderboard[foundHomeTeamBoardIdx].goalsAgainst + match.awayTeamScore
         leaderboard[foundHomeTeamBoardIdx].goalsDifference = leaderboard[foundHomeTeamBoardIdx].goalsFor - leaderboard[foundHomeTeamBoardIdx].goalsAgainst
-        leaderboard[foundHomeTeamBoardIdx].points = leaderboard[foundHomeTeamBoardIdx].points + newPoints
+        leaderboard[foundHomeTeamBoardIdx].points = match.matchPlayed ? leaderboard[foundHomeTeamBoardIdx].points + newPoints : leaderboard[foundHomeTeamBoardIdx].points
       }
 
       if (foundAwayTeamBoardIdx === -1) {
         leaderboard.push({
           teamName: match.awayTeam,
-          matchesPlayed: 1,
+          matchesPlayed: match.matchPlayed ? 1 : 0,
           goalsFor: match.awayTeamScore,
           goalsAgainst: match.homeTeamScore,
           goalsDifference: match.awayTeamScore - match.homeTeamScore,
-          points: this.calculatePoints(match.awayTeamScore, match.homeTeamScore) 
+          points: match.matchPlayed ? this.calculatePoints(match.awayTeamScore, match.homeTeamScore) : 0
         })
       } else {
         const newPoints = this.calculatePoints(match.awayTeamScore, match.homeTeamScore)
 
-        leaderboard[foundAwayTeamBoardIdx].matchesPlayed = leaderboard[foundAwayTeamBoardIdx].matchesPlayed + 1
+        leaderboard[foundAwayTeamBoardIdx].matchesPlayed = match.matchPlayed ? leaderboard[foundAwayTeamBoardIdx].matchesPlayed + 1 : leaderboard[foundAwayTeamBoardIdx].matchesPlayed
         leaderboard[foundAwayTeamBoardIdx].goalsFor = leaderboard[foundAwayTeamBoardIdx].goalsFor + match.awayTeamScore
         leaderboard[foundAwayTeamBoardIdx].goalsAgainst = leaderboard[foundAwayTeamBoardIdx].goalsAgainst + match.homeTeamScore
         leaderboard[foundAwayTeamBoardIdx].goalsDifference = leaderboard[foundAwayTeamBoardIdx].goalsFor - leaderboard[foundAwayTeamBoardIdx].goalsAgainst
-        leaderboard[foundAwayTeamBoardIdx].points = leaderboard[foundAwayTeamBoardIdx].points + newPoints
+        leaderboard[foundAwayTeamBoardIdx].points = match.matchPlayed ? leaderboard[foundAwayTeamBoardIdx].points + newPoints : leaderboard[foundAwayTeamBoardIdx].points
       }
     } 
+
+    leaderboard.sort((boardA, boardB) => boardB.points - boardA.points)
 
     return leaderboard
   }

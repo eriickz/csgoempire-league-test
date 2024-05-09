@@ -4,11 +4,11 @@ import Footer from "./Footer.vue"
 </script>
 
 <template>
-  <main class="w-full">
+  <main class="w-full h-full mb-[26px]">
     <TopBar /> 
     <section class="flex flex-col w-full items-center">
       <slot />
     </section>
-    <Footer />
   </main>
+  <Footer />
 </template>

@@ -22,7 +22,7 @@ const columns = [
     name: "",
     key: "score",
     type: "score",
-    textClasses: "w-6"
+    textClasses: "w-8"
   },
   { 
     name: "Away Team",

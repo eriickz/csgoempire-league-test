@@ -26,15 +26,15 @@
 
   const score = computed(() => {
     if (!props.isMatchPlayed) {
-      return "-:-"
+      return "- : -"
     }
 
-    return `${props.homeScore}:${props.awayScore}`
+    return `${props.homeScore} : ${props.awayScore}`
   });
 </script>
 
 <template>
-  <div :class="containerClasses">
+  <div :class="[containerClasses, { 'text-center': !props.isMatchPlayed }]">
     <p class="font-bold text-base" :class="textClasses">{{score}}</p>
   </div>
 </template>
