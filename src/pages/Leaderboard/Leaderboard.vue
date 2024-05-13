@@ -5,14 +5,7 @@ import DataTable from "../../global/components/DataTable/DataTable.vue"
 import columns from "./columns.js"
 import leagueService from "../../global/leagueService.js"
 
-const leaderboard = ref([])
-
-async function loadLeaderboard() {
-  await leagueService.fetchData()
-  leaderboard.value = leagueService.getLeaderboard()
-}
-
-loadLeaderboard()
+const leaderboard = ref(leagueService.getLeaderboard())
 
 const isTieBreaker = computed(() => {
   const teamsPoints = leaderboard.value.map(team => team.points)

@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from "vue"
+import { nanoid } from "nanoid"
 import TableHead from "./TableHead.vue"
 import Cell from "./Cells/Cell.vue"
 import FlagCell from "./Cells/Flag/FlagCell.vue"
@@ -14,10 +16,15 @@ const props = defineProps({
     required: false
   }
 });
+
+const tableData = computed(() => {
+  return props.data.map(item => ({ ...item, id: nanoid() }))
+})
+
 </script>
 
 <template>
-  <table class="w-[90%] text-tabletext">
+  <table class="w-full text-tabletext">
     <thead>
       <tr class="bg-table h-10 text-xs text-left">
         <template v-for="column in props.columns" :key="column.name">
@@ -28,7 +35,7 @@ const props = defineProps({
     <tbody>
       <tr 
         class="h-[70px] border-b border-b-table" 
-        v-for="(item, index) in props.data" :key="item.id"
+        v-for="(item, index) in tableData" :key="item.id"
         :class="{ 'bg-graybg': index % 2 !== 0 }" 
       >
         <Cell 

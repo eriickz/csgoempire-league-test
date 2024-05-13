@@ -11,7 +11,6 @@
 
 import axios from "axios"
 import dayjs from "dayjs";
-import { nanoid } from "nanoid";
 
 class LeagueService {    
   #matches = []
@@ -45,7 +44,6 @@ class LeagueService {
   setMatches(matches) {
     this.#matches = matches.map(match => ({ 
       ...match, 
-      id: nanoid(),
       matchDate: dayjs(match.matchDate).format("D.M.YYYY hh:mm") 
     }))
   }
@@ -141,11 +139,7 @@ class LeagueService {
      * Asynchronic function to fetch the data from the server and set the matches.
      */
   async fetchData() {
-    const { data } = await axios.get("/getAllMatches", {
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("token")}` 
-      }
-    })
+    const { data } = await axios.get("/getAllMatches")
 
     this.setMatches(data.matches); 
   }    
